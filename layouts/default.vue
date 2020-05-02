@@ -120,11 +120,12 @@ button
     &.clear-next
       color: #e19a97
   > button > img
+    z-index: 1
     display: inline-block
     float: right
-    margin-top: -6px
-    height: 2.5rem
-    width: 2.5rem
+    margin-top: -2px
+    height: 32px
+    width: 40px
     cursor: pointer
 
 .speech

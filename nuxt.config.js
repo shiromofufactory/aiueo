@@ -1,7 +1,7 @@
 const TITLE = "読み上げあいうえお表"
 const DESCRIPTION =
   "テキスト読み上げ機能付き、ブラウザで楽しく学べるあいうえお表です。お子様のひらがな学習にお役立てください。"
-const URL = ""
+const URL = "https://aiueo.netlify.app/"
 module.exports = {
   mode: "spa",
   head: {
@@ -21,13 +21,13 @@ module.exports = {
         property: "og:site_name",
         content: TITLE
       },
-      { hid: "og:type", property: "og:type", content: "website" }
-      //{ hid: "og:url", property: "og:url", content: URL }
-      //{
-      //  hid: "og:image",
-      //  property: "og:image",
-      //  content: URL + "/ogp.jpg"
-      //},
+      { hid: "og:type", property: "og:type", content: "website" },
+      { hid: "og:url", property: "og:url", content: URL },
+      {
+        hid: "og:image",
+        property: "og:image",
+        content: URL + "/ogp.jpg"
+      }
     ],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
   },
