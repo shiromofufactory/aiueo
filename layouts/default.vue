@@ -123,7 +123,7 @@ button
     z-index: 1
     display: inline-block
     float: right
-    margin-top: -2px
+    margin-top: -4px
     height: 32px
     width: 40px
     cursor: pointer
