@@ -65,6 +65,7 @@ export default {
     speech(text) {
       if (!text) return
       this.utter.text = text
+      window.speechSynthesis.cancel()
       window.speechSynthesis.speak(this.utter)
     },
     speechOne(text) {
