@@ -122,7 +122,6 @@ button
     &.clear-next
       color: #e19a97
   > button
-    z-index: 1
     display: inline-block
     float: right
     height: 28px
@@ -180,8 +179,11 @@ footer
   top: 100%
   margin-top: 1rem
   > a
+    display: inline-block
+    margin: 0 0 1rem
     float: right
     text-decoration: none
     font-size: 0.8rem
     color: #3fb4f8
+    text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff, 0px 1px 0 #fff,  0-1px 0 #fff, -1px 0 0 #fff, 1px 0 0 #fff
 </style>

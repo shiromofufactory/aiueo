@@ -12,17 +12,17 @@
         .content(:class="getClass") {{text}}
         button(aria-label="delete")
           img(src="delete.png" @click="backDelete" alt="削除")
-      button.action.speech(aria-label="speech" @click="speechAll" alt="読み上げ")
-        img(src="speech.png")
+      button.action.speech(aria-label="speech" @click="speechAll")
+        img(src="speech.png" alt="読み上げ")
   .row
     .col-sm-3.flex
       one-letter(v-for="value in values1.split('')" :value="value" @send="speechOne")
     .col-sm-3.flex
       one-letter(v-for="value in values2.split('')" :value="value" @send="speechOne")
   footer
-    .note Copyright ©2020 しろもふファクトリー
     a(href="https://docs.google.com/forms/d/e/1FAIpQLScIBdi7vLDZ2gttYNBonjfpXWjgQbSsN78E6_8sK2YqyKMY_A/viewform?usp=sf_link"  target="_blank" rel="noopener")
       | [要望・お問い合わせ]
+    .note Copyright ©2020 しろもふファクトリー
 </template>
 
 <script>
