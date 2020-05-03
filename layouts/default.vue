@@ -45,6 +45,7 @@ img
   max-width: 100%
 
 .note
+  display: inline-block
   vertical-align: bottom
   font-size: 0.8rem
   color: #343a40
@@ -99,10 +100,8 @@ button
 
 .savebox
   height: 3rem
-  font-size: 1.8rem
-  line-height: 1.8rem
   margin-right: 1rem
-  padding: 0.6rem
+  padding: 10px
   border-radius: 0.4em
   border: solid 1px #212529
   background-color: #fff
@@ -112,6 +111,9 @@ button
   display: flex
   flex-direction: row
   .content
+    font-size: 1.8rem
+    line-height: 1.8rem
+    height: 28px
     flex-grow: 1
     max-width: calc(100% - 2rem)
     overflow: hidden
@@ -119,14 +121,17 @@ button
     white-space: nowrap
     &.clear-next
       color: #e19a97
-  > button > img
+  > button
     z-index: 1
     display: inline-block
     float: right
-    margin-top: -4px
-    height: 32px
+    height: 28px
     width: 40px
     cursor: pointer
+    > img
+      height: 28px
+      width: 40px
+
 
 .speech
   border-radius: 0.4rem
@@ -174,4 +179,9 @@ footer
   position: sticky
   top: 100%
   margin-top: 1rem
+  > a
+    float: right
+    text-decoration: none
+    font-size: 0.8rem
+    color: #3fb4f8
 </style>
