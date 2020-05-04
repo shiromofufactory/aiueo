@@ -6,6 +6,15 @@
         img(src="title.png" alt="テキスト読み上げ機能付きあいうえお表")
     .col-sm-2
       .note.mb-1 タブレット・横向き画面でのご使用を推奨します
+  transition
+    .about(v-show="about" @click="about=false")
+      .message
+        h2 このページについて
+        p 作者の2歳の子どもがひらがな・カタカナに興味を持ち始めたので、ふと思い立って作ってみました。
+        p アナログのあいうえお表だと濁音・半濁音や拗音が書かれていないものも多いですが、このあいうえお表はこれらの文字も含めてひらがな・カタカナを全てカバーしています。
+        p 音声はブラウザ標準の読み上げ機能（Speech Synthesis API）を使っています。喋らせる言葉によっては発音が少しおかしいので、ママやパパが近くで見守りながら正しい発音を教えてあげてください。
+        p また、PWA(Progressive Web Apps)に対応していますので、スマホやタブレットから「ホーム画面に追加」をすることでアプリのように動作させることができます。
+        button.close(@click="about=false") &times
   .row.header.mb-1
     .col-6.flex
       .savebox
@@ -23,6 +32,7 @@
   footer
     a(href="https://docs.google.com/forms/d/e/1FAIpQLScIBdi7vLDZ2gttYNBonjfpXWjgQbSsN78E6_8sK2YqyKMY_A/viewform?usp=sf_link"  target="_blank" rel="noopener")
       | [要望・お問い合わせ]
+    a(href="#" @click.prevent="about=!about") [about]
     .note Copyright ©2020 しろもふファクトリー
 </template>
 
@@ -40,13 +50,14 @@ export default {
       "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや ゆ よらりるれろわをんー ",
     values2:
       "     がぎぐげござじずぜぞだぢづでど     ばびぶべぼぱぴぷぺぽゃ ゅ ょぁぃぅぇぉっ   ",
-    katakana: false
+    katakana: false,
+    about: false
   }),
   created() {
     this.utter = new SpeechSynthesisUtterance()
     this.voices = window.speechSynthesis.getVoices()
     this.utter.voice = this.voices[57]
-    this.utter.rate = 1.0 //#e0ea9b
+    this.utter.rate = 1.0
     /*
     window.speechSynthesis.onvoiceschanged = () => {
       if (!this.voices.length) {

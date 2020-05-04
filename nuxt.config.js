@@ -1,6 +1,7 @@
-const TITLE = "読み上げあいうえお表"
+const TITLE =
+  "読み上げあいうえお表 - スマホやタブレットで楽しくひらがな・カタカナを学習！"
 const DESCRIPTION =
-  "テキスト読み上げ機能付き、ブラウザで楽しく学べるデジタル版あいうえお表です。お子様のひらがな学習にお役立てください。タブレット推奨です。"
+  "作者の2歳の子どもがひらがな・カタカナに興味を持ち始めたので、ふと思い立って作ってみました。アナログのあいうえお表だと濁音・半濁音や拗音が書かれていないものも多いですが、このあいうえお表はこれらの文字も含めてひらがな・カタカナを全てカバーしています。"
 const URL = "https://aiueo.netlify.app/"
 module.exports = {
   mode: "spa",
@@ -48,6 +49,7 @@ module.exports = {
   manifest: {
     name: TITLE,
     title: TITLE,
+    short_name: "あいうえお表",
     "og:title": TITLE,
     description: DESCRIPTION,
     "og:description": DESCRIPTION,

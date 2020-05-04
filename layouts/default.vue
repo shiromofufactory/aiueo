@@ -41,20 +41,18 @@ body
 h1
   margin: 0 0 1rem
 
+h2
+  margin: 0 0 1rem
+  font-size: 1.2rem
+
+p
+  text-align: left
+  font-size: 0.9rem
+  color: #343a40
+  margin: 0 0 1rem
+
 img
   max-width: 100%
-
-.note
-  display: inline-block
-  vertical-align: bottom
-  font-size: 0.8rem
-  color: #343a40
-  text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff, 0px 1px 0 #fff,  0-1px 0 #fff, -1px 0 0 #fff, 1px 0 0 #fff
-
-.header
-  position: sticky
-  top: 0
-  z-index: 1
 
 button
   padding: 0
@@ -63,6 +61,7 @@ button
   cursor: pointer
   &:focus
     outline: 0
+
 
 .container
   margin: 0 auto
@@ -90,6 +89,56 @@ button
       .col#{$infix}-#{$i}
         flex: 0 0 percentage($i / $grid-columns)
         max-width: percentage($i / $grid-columns)
+
+.header
+  position: sticky
+  top: 0
+  z-index: 1
+
+.note
+  display: inline-block
+  vertical-align: bottom
+  font-size: 0.8rem
+  color: #343a40
+  text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff, 0px 1px 0 #fff,  0-1px 0 #fff, -1px 0 0 #fff, 1px 0 0 #fff
+
+.about
+  position: fixed
+  display: flex
+  justify-content: center
+  align-items: center
+  text-align: center
+  left: 0
+  top: 0
+  height: 100%
+  width: 100%
+  z-index: 9999
+  background: rgba(0, 0, 0, 0.4)
+  > .message
+    margin: 0 1rem
+    padding: 1rem
+    border-radius: 0.4rem
+    width: 100%
+    background: #fff
+    position: relative
+    box-shadow: 0 0.125rem 0.25rem rgba(#000, 0.2)
+    > .close
+      position: absolute
+      top: 0
+      right: 1rem
+      font-size: 2rem
+      font-weight: bold
+      color: #000
+      text-shadow: 0 1px 0 #fff
+      opacity: .5
+
+.v-enter-active,
+.v-leave-active
+  transition: opacity 0.2s
+
+.v-enter,
+.v-leave-to
+  opacity: 0
 
 .flex
   display: flex
@@ -130,7 +179,6 @@ button
     > img
       height: 28px
       width: 40px
-
 
 .speech
   border-radius: 0.4rem
@@ -183,7 +231,7 @@ footer
   margin-top: 1rem
   > a
     display: inline-block
-    margin: 0 0 1rem
+    margin: 0 0 1rem 1rem
     float: right
     text-decoration: none
     font-size: 0.8rem
