@@ -16,9 +16,10 @@
         img(src="speech.png" alt="読み上げ")
   .row
     .col-sm-3.flex
-      one-letter(v-for="value in values1.split('')" :value="value" @send="speechOne")
+      one-letter(v-for="value in values1.split('')" :value="getKana(value)" @send="speechOne")
     .col-sm-3.flex
-      one-letter(v-for="value in values2.split('')" :value="value" @send="speechOne")
+      one-letter(v-for="value in values2.split('')" :value="getKana(value)" @send="speechOne")
+      .one-letter.switch.action(@click="toggleKatakana") {{katakana ? "あいう" : "アイウ"}}
   footer
     a(href="https://docs.google.com/forms/d/e/1FAIpQLScIBdi7vLDZ2gttYNBonjfpXWjgQbSsN78E6_8sK2YqyKMY_A/viewform?usp=sf_link"  target="_blank" rel="noopener")
       | [要望・お問い合わせ]
@@ -38,13 +39,14 @@ export default {
     values1:
       "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや ゆ よらりるれろわをんー ",
     values2:
-      "     がぎぐげござじずぜぞだぢづでど     ばびぶべぼぱぴぷぺぽゃ ゅ ょぁぃぅぇぉ    っ"
+      "     がぎぐげござじずぜぞだぢづでど     ばびぶべぼぱぴぷぺぽゃ ゅ ょぁぃぅぇぉっ   ",
+    katakana: false
   }),
   created() {
     this.utter = new SpeechSynthesisUtterance()
     this.voices = window.speechSynthesis.getVoices()
     this.utter.voice = this.voices[57]
-    this.utter.rate = 1.0
+    this.utter.rate = 1.0 //#e0ea9b
     /*
     window.speechSynthesis.onvoiceschanged = () => {
       if (!this.voices.length) {
@@ -62,6 +64,15 @@ export default {
     }
   },
   methods: {
+    getKana(str) {
+      if (!this.katakana) return str
+      return str.replace(/[\u3041-\u3096]/g, match => {
+        return String.fromCharCode(match.charCodeAt(0) + 0x60)
+      })
+    },
+    toggleKatakana() {
+      this.katakana = !this.katakana
+    },
     speech(text) {
       if (!text) return
       this.utter.text = text

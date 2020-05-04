@@ -168,6 +168,9 @@ button
   text-align: center
   background-color: #f8f9fa
   opacity: 0.9
+  &.switch
+    background-color: #e0ea9b
+    font-size: 0.8rem
   &:not(.action)
     background-color: transparent
     border: none

@@ -1,6 +1,6 @@
 const TITLE = "読み上げあいうえお表"
 const DESCRIPTION =
-  "テキスト読み上げ機能付き、ブラウザで楽しく学べるあいうえお表です。お子様のひらがな学習にお役立てください。"
+  "テキスト読み上げ機能付き、ブラウザで楽しく学べるデジタル版あいうえお表です。お子様のひらがな学習にお役立てください。タブレット推奨です。"
 const URL = "https://aiueo.netlify.app/"
 module.exports = {
   mode: "spa",
