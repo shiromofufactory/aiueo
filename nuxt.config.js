@@ -2,7 +2,7 @@ const TITLE =
   "読み上げあいうえお表 - スマホやタブレットで楽しくひらがな・カタカナを学習！"
 const DESCRIPTION =
   "作者の2歳の子どもがひらがな・カタカナに興味を持ち始めたので、ふと思い立って作ってみました。アナログのあいうえお表だと濁音・半濁音や拗音が書かれていないものも多いですが、このあいうえお表はこれらの文字も含めてひらがな・カタカナを全てカバーしています。"
-const URL = "https://aiueo.netlify.app/"
+const URL = "https://aiueo.netlify.app"
 module.exports = {
   mode: "spa",
   head: {
@@ -33,7 +33,20 @@ module.exports = {
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
   },
   loading: { color: "#3B8070" },
-  modules: ["@nuxtjs/pwa"],
+  modules: [
+    "@nuxtjs/pwa",
+    "@nuxtjs/sitemap",
+    [
+      "@nuxtjs/google-analytics",
+      {
+        id: "UA-143511926-7"
+      }
+    ]
+  ],
+  sitemap: {
+    path: "/sitemap.xml",
+    hostname: URL
+  },
   build: {
     extend(config, { isDev, isClient }) {
       if (isDev && isClient) {
