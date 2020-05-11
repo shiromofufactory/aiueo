@@ -1,6 +1,7 @@
 # aiueo
 
 > テキスト読み上げ機能付き、ブラウザで楽しく学べるあいうえお表です。お子様のひらがな学習にお役立てください。
+https://aiueo.netlify.app/
 
 ## Build Setup
 
