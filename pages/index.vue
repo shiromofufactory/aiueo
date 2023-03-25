@@ -33,7 +33,7 @@
     a(href="https://docs.google.com/forms/d/e/1FAIpQLScIBdi7vLDZ2gttYNBonjfpXWjgQbSsN78E6_8sK2YqyKMY_A/viewform?usp=sf_link"  target="_blank" rel="noopener")
       | [要望・お問い合わせ]
     a(href="#" @click.prevent="about=!about") [about]
-    .note Copyright ©2020 しろもふファクトリー
+    .note Copyright ©2023 しろもふファクトリー
 </template>
 
 <script>
@@ -56,7 +56,8 @@ export default {
   created() {
     this.utter = new SpeechSynthesisUtterance()
     this.voices = window.speechSynthesis.getVoices()
-    this.utter.voice = this.voices[57]
+    this.utter.voice = this.voices[57] || this.voices[0]
+    console.log(this.utter.voice)
     this.utter.rate = 1.0
     /*
     window.speechSynthesis.onvoiceschanged = () => {
