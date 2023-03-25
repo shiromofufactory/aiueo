@@ -33,7 +33,7 @@
     a(href="https://docs.google.com/forms/d/e/1FAIpQLScIBdi7vLDZ2gttYNBonjfpXWjgQbSsN78E6_8sK2YqyKMY_A/viewform?usp=sf_link"  target="_blank" rel="noopener")
       | [要望・お問い合わせ]
     a(href="#" @click.prevent="about=!about") [about]
-    .note Copyright ©2023 しろもふファクトリー
+    .note Copyright ©2022 しろもふファクトリー
 </template>
 
 <script>
