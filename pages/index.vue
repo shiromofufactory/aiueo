@@ -56,17 +56,14 @@ export default {
   created() {
     this.utter = new SpeechSynthesisUtterance()
     this.voices = window.speechSynthesis.getVoices()
-    this.utter.voice = this.voices[57] || this.voices[0]
-    console.log(this.utter.voice)
+    // this.utter.voice = this.voices[57] || this.voices[0]
     this.utter.rate = 1.0
-    /*
     window.speechSynthesis.onvoiceschanged = () => {
       if (!this.voices.length) {
         this.voices = window.speechSynthesis.getVoices()
-        this.utter.voice = this.voices[0]
+        this.utter.voice = this.voices[57] || this.voices[0]
       }
     }
-    */
   },
   computed: {
     getClass() {
