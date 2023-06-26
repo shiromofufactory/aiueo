@@ -48,7 +48,6 @@ export default {
   },
   data: () => ({
     utter: {},
-    voices: [],
     text: "",
     clearNext: false,
     values1:
@@ -65,12 +64,6 @@ export default {
     this.voices = window.speechSynthesis.getVoices()
     this.utter.lang = "ja-JP"
     this.utter.rate = 1.0
-    window.speechSynthesis.onvoiceschanged = () => {
-      if (!this.voices.length) {
-        this.voices = window.speechSynthesis.getVoices()
-        this.utter.voice = this.voices[57] || this.voices[0]
-      }
-    }
   },
   computed: {
     getClass() {
@@ -92,6 +85,7 @@ export default {
     speech(text) {
       if (!text) return
       this.utter.text = text
+      console.log(this.utter)
       window.speechSynthesis.cancel()
       window.speechSynthesis.speak(this.utter)
     },
