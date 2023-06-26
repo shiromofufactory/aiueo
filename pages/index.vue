@@ -25,15 +25,20 @@
         img(src="speech.png" alt="読み上げ")
   .row
     .col-sm-3.flex
-      one-letter(v-for="value in values1.split('')" :value="getKana(value)" @send="speechOne")
+      one-letter(v-for="value,idx in values1.split('')" :key="idx" :value="getKana(value)" @send="speechOne")
     .col-sm-3.flex
-      one-letter(v-for="value in values2.split('')" :value="getKana(value)" @send="speechOne")
+      one-letter(v-for="value,idx in values2.split('')" :key="idx" :value="getKana(value)" @send="speechOne")
       .one-letter.switch.action(@click="toggleKatakana") {{katakana ? "あいう" : "アイウ"}}
+  .row(style="margin-top:48px")
+    .col-sm-3.flex
+      one-letter(v-for="value,idx in values3.split('')" :key="idx" :value="getKana(value)" @send="speechOne")
+    .col-sm-3.flex
+      one-letter(v-for="value,idx in values4.split('')" :key="idx" :value="getKana(value)" @send="speechOne")
   footer
     a(href="https://docs.google.com/forms/d/e/1FAIpQLScIBdi7vLDZ2gttYNBonjfpXWjgQbSsN78E6_8sK2YqyKMY_A/viewform?usp=sf_link"  target="_blank" rel="noopener")
       | [要望・お問い合わせ]
     a(href="#" @click.prevent="about=!about") [about]
-    .note Copyright ©2022 しろもふファクトリー
+    .note Copyright ©2023 しろもふファクトリー
 </template>
 
 <script>
@@ -50,13 +55,15 @@ export default {
       "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや ゆ よらりるれろわをんー ",
     values2:
       "     がぎぐげござじずぜぞだぢづでど     ばびぶべぼぱぴぷぺぽゃ ゅ ょぁぃぅぇぉっ   ",
+    values3: "01234",
+    values4: "56789",
     katakana: false,
     about: false
   }),
   created() {
     this.utter = new SpeechSynthesisUtterance()
     this.voices = window.speechSynthesis.getVoices()
-    // this.utter.voice = this.voices[57] || this.voices[0]
+    this.utter.lang = "ja-JP"
     this.utter.rate = 1.0
     window.speechSynthesis.onvoiceschanged = () => {
       if (!this.voices.length) {

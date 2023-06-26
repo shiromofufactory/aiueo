@@ -21,8 +21,9 @@ export default {
   },
   methods: {
     click() {
-      if (!this.value.trim()) return
-      this.$emit("send", this.value)
+      const valueStr = String(this.value)
+      if (!valueStr.trim()) return
+      this.$emit("send", valueStr)
     }
   }
 }

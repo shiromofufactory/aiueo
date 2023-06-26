@@ -4,7 +4,8 @@ nuxt
 <style lang="sass">
 $grid-breakpoints: (xs: 0, sm: 576px)
 $grid-columns: 6
-$font: "ヒラギノ丸ゴ Pro W4","ヒラギノ丸ゴ Pro","Hiragino Maru Gothic Pro","ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","HG丸ｺﾞｼｯｸM-PRO","HGMaruGothicMPRO";
+$font: "ヒラギノ丸ゴ Pro W4","ヒラギノ丸ゴ Pro","Hiragino Maru Gothic Pro","ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","HG丸ｺﾞｼｯｸM-PRO","HGMaruGothicMPRO"
+@use 'sass:math'
 @function breakpoint-min($name, $breakpoints: $grid-breakpoints)
   $min: map-get($breakpoints, $name)
   @return if($min != 0, $min, null)
@@ -87,8 +88,8 @@ button
   +media-breakpoint-up($breakpoint, $grid-breakpoints)
     @for $i from 1 through $grid-columns
       .col#{$infix}-#{$i}
-        flex: 0 0 percentage($i / $grid-columns)
-        max-width: percentage($i / $grid-columns)
+        flex: 0 0 percentage(math.div($i, $grid-columns))
+        max-width: percentage(math.div($i, $grid-columns))
 
 .header
   position: sticky
