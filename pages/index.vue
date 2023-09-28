@@ -5,7 +5,7 @@
       h1
         img(src="title.png" alt="テキスト読み上げ機能付きあいうえお表")
     .col-sm-2
-      .note.mb-1 タブレット・横向き画面でのご使用を推奨します
+      .note.mb-1 タブレットでのご使用を推奨します
   transition
     .about(v-show="about" @click="about=false")
       .message
@@ -35,9 +35,13 @@
     .col-sm-3.flex
       one-letter(v-for="value,idx in values4.split('')" :key="idx" :value="getKana(value)" @send="speechOne")
   footer
-    a(href="https://docs.google.com/forms/d/e/1FAIpQLScIBdi7vLDZ2gttYNBonjfpXWjgQbSsN78E6_8sK2YqyKMY_A/viewform?usp=sf_link"  target="_blank" rel="noopener")
-      | [要望・お問い合わせ]
-    a(href="#" @click.prevent="about=!about") [about]
+    .footer-menu
+      button.action(@click="isVertical=!isVertical")
+        | {{ isVertical? '横書きにする' : '縦書きにする' }}
+      .spacer
+      a(href="https://docs.google.com/forms/d/e/1FAIpQLScIBdi7vLDZ2gttYNBonjfpXWjgQbSsN78E6_8sK2YqyKMY_A/viewform?usp=sf_link"  target="_blank" rel="noopener")
+        | [要望・お問い合わせ]
+      a(href="#" @click.prevent="about=!about") [about]
     .note Copyright ©2023 しろもふファクトリー
 </template>
 
@@ -50,13 +54,11 @@ export default {
     utter: {},
     text: "",
     clearNext: false,
-    values1:
-      "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや ゆ よらりるれろわをんー ",
-    values2:
-      "     がぎぐげござじずぜぞだぢづでど     ばびぶべぼぱぴぷぺぽゃ ゅ ょぁぃぅぇぉっ   ",
     values3: "01234",
     values4: "56789",
     katakana: false,
+    isVertical: false,
+    isMobile: false,
     about: false
   }),
   created() {
@@ -65,7 +67,36 @@ export default {
     this.utter.lang = "ja-JP"
     this.utter.rate = 1.0
   },
+  mounted() {
+    this.setIsMobile()
+    window.addEventListener("resize", this.setIsMobile)
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.setIsMobile)
+  },
   computed: {
+    values1() {
+      if (this.isVertical) {
+        if (this.isMobile) {
+          return "なたさかあにちすきいぬつすくうねてせけえのとそこおわらやまはをり みひんるゆふむーれ めへ ろよもほ"
+        } else {
+          return "わらやまはをり みひんるゆふむーれ めへ ろよもほ     っぁゃぱば ぃ ぴび ぅゅぷぶ ぇ ぺべ ぉょぽぼ"
+        }
+      } else {
+        return "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもや ゆ よらりるれろわをんー "
+      }
+    },
+    values2() {
+      if (this.isVertical) {
+        if (this.isMobile) {
+          return "      だざが  ぢじぎ  づずぐ  でぜげ  どぞごっぁゃぱば ぃ ぴび ぅゅぷぶ ぇ ぺべ ぉょぽぼ"
+        } else {
+          return "なたさかあにちすきいぬつすくうねてせけえのとそこお      だざが  ぢじぎ  づずぐ  でぜげ  どぞご"
+        }
+      } else {
+        return "     がぎぐげござじずぜぞだぢづでど     ばびぶべぼぱぴぷぺぽゃ ゅ ょぁぃぅぇぉっ   "
+      }
+    },
     getClass() {
       return {
         "clear-next": this.clearNext
@@ -73,6 +104,10 @@ export default {
     }
   },
   methods: {
+    setIsMobile() {
+      this.isMobile = window.innerWidth < 576
+      console.log(this.isMobile)
+    },
     getKana(str) {
       if (!this.katakana) return str
       return str.replace(/[\u3041-\u3096]/g, match => {

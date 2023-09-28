@@ -225,17 +225,33 @@ button
     border: none
     cursor: default
 
+.spacer
+  flex-grow: 1 !important
+
 footer
-  display: block
   position: sticky
   top: 100%
-  margin-top: 1rem
-  > a
-    display: inline-block
-    margin: 0 0 1rem 1rem
-    float: right
-    text-decoration: none
-    font-size: 0.8rem
-    color: #3fb4f8
-    text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff, 0px 1px 0 #fff,  0-1px 0 #fff, -1px 0 0 #fff, 1px 0 0 #fff
+  margin-top: 2rem
+  .footer-menu
+    display: flex
+    margin-bottom: 0.5rem
+    > button
+      border-radius: 0.4rem
+      border: outset
+      display: block
+      font-size: 0.8rem
+      height: 2rem
+      width: 8rem
+      padding: 0.4rem
+      background-color: #e0ea9b
+      &:active,&:hover
+        border: inset
+        background-color: #e0ea9b
+    > a
+      display: inline-block
+      margin: 0 0 1rem 1rem
+      text-decoration: none
+      font-size: 0.8rem
+      color: #3fb4f8
+      text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff, 0px 1px 0 #fff,  0-1px 0 #fff, -1px 0 0 #fff, 1px 0 0 #fff
 </style>
