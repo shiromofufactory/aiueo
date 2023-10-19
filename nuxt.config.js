@@ -4,7 +4,7 @@ const DESCRIPTION =
   "作者の2歳の子どもがひらがな・カタカナに興味を持ち始めたので、ふと思い立って作ってみました。アナログのあいうえお表だと濁音・半濁音や拗音が書かれていないものも多いですが、このあいうえお表はこれらの文字も含めてひらがな・カタカナを全てカバーしています。"
 const URL = "https://aiueo.netlify.app"
 module.exports = {
-  mode: "spa",
+  ssr: false,
   head: {
     htmlAttrs: {
       lang: "ja"
