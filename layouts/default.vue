@@ -40,7 +40,7 @@ body
   background: url("/back.jpg")
 
 h1
-  margin: 0 0 1rem
+  margin: 0 0 0.25rem
 
 h2
   margin: 0 0 1rem
@@ -66,7 +66,7 @@ button
 
 .container
   margin: 0 auto
-  padding: 1rem
+  padding: 0.5rem 1rem
   width: 100%
   max-width: 1080px
   min-height: 100vh
@@ -95,6 +95,8 @@ button
   position: sticky
   top: 0
   z-index: 1
+  .header-inner
+    background-color: rgb(249,248,220)
 
 .note
   display: inline-block
@@ -145,6 +147,9 @@ button
   display: flex
   flex-wrap: wrap
 
+.mr-1
+  margin-right: 1rem
+
 .mb-1
   margin-bottom: 1rem
 
@@ -163,7 +168,7 @@ button
   .content
     font-size: 1.8rem
     line-height: 1.8rem
-    height: 28px
+    height: 1.8rem
     flex-grow: 1
     max-width: calc(100% - 2rem)
     overflow: hidden
@@ -185,7 +190,7 @@ button
   border-radius: 0.4rem
   border: outset
   display: block
-  height: 3rem
+  height: 48px
   width: 4rem
   padding: 0.5rem
   background-color: #fff
@@ -203,16 +208,16 @@ button
     background-color: #89d1fb
 
 .one-letter
-  padding: 0.1rem
+  padding: 0 0.1rem
   width: 20%
   color: #212529
   border-radius: 0.4rem
   border: outset
   display: block
-  height: 3rem
+  height: 46px
   font-family: $font
   font-size: 1.8rem
-  line-height: 2.8rem
+  line-height: 46px
   font-weight: bold
   text-align: center
   background-color: #f8f9fa
@@ -231,7 +236,7 @@ button
 footer
   position: sticky
   top: 100%
-  margin-top: 2rem
+  margin-top: 1rem
   .footer-menu
     display: flex
     margin-bottom: 0.5rem
@@ -249,7 +254,7 @@ footer
         background-color: #e0ea9b
     > a
       display: inline-block
-      margin: 0 0 1rem 1rem
+      margin: 0.75rem 0 0 1rem
       text-decoration: none
       font-size: 0.8rem
       color: #3fb4f8

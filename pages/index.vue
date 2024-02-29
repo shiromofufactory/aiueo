@@ -10,39 +10,42 @@
     .about(v-show="about" @click="about=false")
       .message
         h2 このページについて
-        p 作者の2歳の子どもがひらがな・カタカナに興味を持ち始めたので、ふと思い立って作ってみました。
+        p シンプルな見栄えの、音が出るデジタルあいうえお表です。
         p アナログのあいうえお表だと濁音・半濁音や拗音が書かれていないものも多いですが、このあいうえお表はこれらの文字も含めてひらがな・カタカナを全てカバーしています。
         p 音声はブラウザ標準の読み上げ機能（Speech Synthesis API）を使っています。喋らせる言葉によっては発音が少しおかしいので、ママやパパが近くで見守りながら正しい発音を教えてあげてください。
         p また、PWA(Progressive Web Apps)に対応していますので、スマホやタブレットから「ホーム画面に追加」をすることでアプリのように動作させることができます。
         button.close(@click="about=false") &times
   .row.header.mb-1
-    .col-6.flex
-      .savebox
-        .content(:class="getClass") {{text}}
-        button(aria-label="delete")
-          img(src="delete.png" @click="backDelete" alt="削除")
-      button.action.speech(aria-label="speech" @click="speechAll")
-        img(src="speech.png" alt="読み上げ")
+    .col-6
+      .header-inner.flex
+        .savebox
+          .content(:class="getClass") {{text}}
+          button(aria-label="delete")
+            img(src="delete.png" @click="backDelete" alt="削除")
+        template(v-if="!isMobile")
+          button.mr-1.action.speech(aria-label="trash" @click="allDelete")
+            img(src="trash.png" alt="全て削除")
+        button.action.speech(aria-label="speech" @click="speechAll")
+          img(src="speech.png" alt="読み上げ")
   .row
     .col-sm-3.flex
       one-letter(v-for="value,idx in values1.split('')" :key="idx" :value="getKana(value)" @send="speechOne")
     .col-sm-3.flex
       one-letter(v-for="value,idx in values2.split('')" :key="idx" :value="getKana(value)" @send="speechOne")
-      .one-letter.switch.action(@click="toggleKatakana") {{katakana ? "あいう" : "アイウ"}}
-  .row(style="margin-top:48px")
+  .row(style="margin-top:46px")
     .col-sm-3.flex
       one-letter(v-for="value,idx in values3.split('')" :key="idx" :value="getKana(value)" @send="speechOne")
     .col-sm-3.flex
       one-letter(v-for="value,idx in values4.split('')" :key="idx" :value="getKana(value)" @send="speechOne")
   footer
     .footer-menu
-      button.action(@click="isVertical=!isVertical")
+      button.action(@click="toggleVertical")
         | {{ isVertical? '横書きにする' : '縦書きにする' }}
       .spacer
       a(href="https://docs.google.com/forms/d/e/1FAIpQLScIBdi7vLDZ2gttYNBonjfpXWjgQbSsN78E6_8sK2YqyKMY_A/viewform?usp=sf_link"  target="_blank" rel="noopener")
         | [要望・お問い合わせ]
       a(href="#" @click.prevent="about=!about") [about]
-    .note Copyright ©2023 しろもふファクトリー
+    .note Copyright ©2024 しろもふファクトリー
 </template>
 
 <script>
@@ -68,6 +71,12 @@ export default {
     this.utter.rate = 1.0
   },
   mounted() {
+    let config = {}
+    try {
+      config = JSON.parse(localStorage.getItem("aiueo-config"))
+    } catch {}
+    this.isVertical = !!config.isVertical
+    this.katakana = !!config.katakana
     this.setIsMobile()
     window.addEventListener("resize", this.setIsMobile)
   },
@@ -89,12 +98,12 @@ export default {
     values2() {
       if (this.isVertical) {
         if (this.isMobile) {
-          return "      だざが  ぢじぎ  づずぐ  でぜげ  どぞごっぁゃぱば ぃ ぴび ぅゅぷぶ ぇ ぺべ ぉょぽぼ"
+          return "      だざが  ぢじぎ  づずぐ  でぜげ  どぞごっぁゃぱば ぃ ぴび ぅゅぷぶ ぇ ぺべ ぉょぽぼ@"
         } else {
-          return "なたさかあにちしきいぬつすくうねてせけえのとそこお      だざが  ぢじぎ  づずぐ  でぜげ  どぞご"
+          return "なたさかあにちしきいぬつすくうねてせけえのとそこお      だざが  ぢじぎ  づずぐ  でぜげ  どぞご@"
         }
       } else {
-        return "     がぎぐげござじずぜぞだぢづでど     ばびぶべぼぱぴぷぺぽゃ ゅ ょぁぃぅぇぉっ   "
+        return "     がぎぐげござじずぜぞだぢづでど     ばびぶべぼぱぴぷぺぽゃ ゅ ょぁぃぅぇぉっ   @"
       }
     },
     getClass() {
@@ -104,9 +113,21 @@ export default {
     }
   },
   methods: {
+    saveConfig() {
+      localStorage.setItem(
+        "aiueo-config",
+        JSON.stringify({
+          isVertical: this.isVertical,
+          katakana: this.katakana
+        })
+      )
+    },
     setIsMobile() {
       this.isMobile = window.innerWidth < 576
-      console.log(this.isMobile)
+    },
+    toggleVertical() {
+      this.isVertical = !this.isVertical
+      this.saveConfig()
     },
     getKana(str) {
       if (!this.katakana) return str
@@ -116,17 +137,19 @@ export default {
     },
     toggleKatakana() {
       this.katakana = !this.katakana
+      this.saveConfig()
     },
     speech(text) {
       if (!text) return
       this.utter.text = text
-      console.log(this.utter)
       window.speechSynthesis.cancel()
       window.speechSynthesis.speak(this.utter)
     },
     speechOne(text) {
+      if (text == "@") return this.toggleKatakana()
       this.speech(text)
       this.text = (!this.clearNext ? this.text : "") + text
+      console.log(this.text)
       this.clearNext = false
     },
     speechAll() {
@@ -135,11 +158,14 @@ export default {
     },
     backDelete() {
       if (this.clearNext) {
-        this.text = ""
-        this.clearNext = false
+        this.allDelete()
       } else {
         this.text = this.text.slice(0, this.text.length - 1)
       }
+    },
+    allDelete() {
+      this.text = ""
+      this.clearNext = false
     }
   }
 }

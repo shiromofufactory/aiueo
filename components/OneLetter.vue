@@ -1,6 +1,7 @@
 <template lang="pug">
 .one-letter(@click="click" :class="getClass")
-  | {{value}}
+  span(v-if="value=='@'") {{katakana ? "あいう" : "アイウ"}}
+  span(v-else) {{value}}
 </template>
 
 <script>
@@ -10,12 +11,18 @@ export default {
       type: String,
       required: false,
       default: ""
+    },
+    katakana: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   computed: {
     getClass() {
       return {
-        action: !!this.value.trim()
+        action: !!this.value.trim(),
+        switch: this.value == "@"
       }
     }
   },
