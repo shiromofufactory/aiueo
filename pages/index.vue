@@ -23,7 +23,7 @@
           button(aria-label="delete")
             img(src="delete.png" @click="backDelete" alt="削除")
         template(v-if="!isMobile")
-          button.mr-1.action.speech(aria-label="trash" @click="allDelete")
+          button.action.speech(aria-label="trash" @click="allDelete")
             img(src="trash.png" alt="全て削除")
         button.action.speech(aria-label="speech" @click="speechAll")
           img(src="speech.png" alt="読み上げ")
@@ -40,10 +40,11 @@
   footer
     .footer-menu
       button.action(@click="toggleVertical")
-        | {{ isVertical? '横書きにする' : '縦書きにする' }}
+        | {{ isVertical ? '横書き' : '縦書き' }}
+      MySwitch(:value="slow" @input="toggleSlow")
       .spacer
       a(href="https://docs.google.com/forms/d/e/1FAIpQLScIBdi7vLDZ2gttYNBonjfpXWjgQbSsN78E6_8sK2YqyKMY_A/viewform?usp=sf_link"  target="_blank" rel="noopener")
-        | [要望・お問い合わせ]
+        | [お問い合わせ]
       a(href="#" @click.prevent="about=!about") [about]
     .note Copyright ©2024 しろもふファクトリー
 </template>
@@ -51,7 +52,8 @@
 <script>
 export default {
   components: {
-    OneLetter: () => import("@/components/OneLetter.vue")
+    OneLetter: () => import("@/components/OneLetter.vue"),
+    MySwitch: () => import("@/components/MySwitch.vue")
   },
   data: () => ({
     utter: {},
@@ -62,21 +64,23 @@ export default {
     katakana: false,
     isVertical: false,
     isMobile: false,
+    slow: false,
     about: false
   }),
   created() {
     this.utter = new SpeechSynthesisUtterance()
     this.voices = window.speechSynthesis.getVoices()
     this.utter.lang = "ja-JP"
-    this.utter.rate = 1.0
   },
   mounted() {
     let config = {}
     try {
       config = JSON.parse(localStorage.getItem("aiueo-config"))
     } catch {}
-    this.isVertical = !!config.isVertical
-    this.katakana = !!config.katakana
+    this.isVertical = !!config?.isVertical
+    this.katakana = !!config?.katakana
+    this.slow = !!config?.slow
+    this.setUtterRate()
     this.setIsMobile()
     window.addEventListener("resize", this.setIsMobile)
   },
@@ -98,12 +102,12 @@ export default {
     values2() {
       if (this.isVertical) {
         if (this.isMobile) {
-          return "      だざが  ぢじぎ  づずぐ  でぜげ  どぞごっぁゃぱば ぃ ぴび ぅゅぷぶ ぇ ぺべ ぉょぽぼ@"
+          return "      だざが  ぢじぎ  づずぐ  でぜげ  どぞごっぁゃぱば ぃ ぴび ぅゅぷぶ ぇ ぺべ、ぉょぽぼ@"
         } else {
-          return "なたさかあにちしきいぬつすくうねてせけえのとそこお      だざが  ぢじぎ  づずぐ  でぜげ  どぞご@"
+          return "なたさかあにちしきいぬつすくうねてせけえのとそこお      だざが  ぢじぎ  づずぐ  でぜげ、 どぞご@"
         }
       } else {
-        return "     がぎぐげござじずぜぞだぢづでど     ばびぶべぼぱぴぷぺぽゃ ゅ ょぁぃぅぇぉっ   @"
+        return "     がぎぐげござじずぜぞだぢづでど     ばびぶべぼぱぴぷぺぽゃ ゅ ょぁぃぅぇぉっ  、@"
       }
     },
     getClass() {
@@ -118,7 +122,8 @@ export default {
         "aiueo-config",
         JSON.stringify({
           isVertical: this.isVertical,
-          katakana: this.katakana
+          katakana: this.katakana,
+          slow: this.slow
         })
       )
     },
@@ -128,6 +133,14 @@ export default {
     toggleVertical() {
       this.isVertical = !this.isVertical
       this.saveConfig()
+    },
+    toggleSlow(e) {
+      this.slow = !this.slow
+      this.setUtterRate()
+      this.saveConfig()
+    },
+    setUtterRate() {
+      this.utter.rate = this.slow ? 0.5 : 1.0
     },
     getKana(str) {
       if (!this.katakana) return str
@@ -149,7 +162,6 @@ export default {
       if (text == "@") return this.toggleKatakana()
       this.speech(text)
       this.text = (!this.clearNext ? this.text : "") + text
-      console.log(this.text)
       this.clearNext = false
     },
     speechAll() {

@@ -246,13 +246,14 @@ footer
       display: block
       font-size: 0.8rem
       height: 2rem
-      width: 8rem
-      padding: 0.4rem
+      width: 6rem
+      padding: 0.3rem
       background-color: #e0ea9b
       &:active,&:hover
         border: inset
         background-color: #e0ea9b
     > a
+      flex-shrink: 0
       display: inline-block
       margin: 0.75rem 0 0 1rem
       text-decoration: none
