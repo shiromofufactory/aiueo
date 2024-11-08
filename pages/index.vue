@@ -20,12 +20,12 @@
       .header-inner.flex
         .savebox
           .content(:class="getClass") {{text}}
-          button(aria-label="delete")
+          button(aria-label="削除")
             img(src="delete.png" @click="backDelete" alt="削除")
         template(v-if="!isMobile")
-          button.action.speech(aria-label="trash" @click="allDelete")
+          button.action.speech(aria-label="全て削除" @click="allDelete")
             img(src="trash.png" alt="全て削除")
-        button.action.speech(aria-label="speech" @click="speechAll")
+        button.action.speech(aria-label="読み上げ" @click="speechAll")
           img(src="speech.png" alt="読み上げ")
   .row
     .col-sm-3.flex
