@@ -91,7 +91,7 @@ export default {
     values1() {
       if (this.isVertical) {
         if (this.isMobile) {
-          return "なたさかあにちしきいぬつすくうねてせけえのとそこお     わらやまはをり みひんるゆふむーれ めへ ろよもほ"
+          return "なたさかあにちしきいぬつすくうねてせけえのとそこお     わらやまはをり みひんるゆむふーれ めへ ろよもほ"
         } else {
           return "わらやまはをり みひんるゆむふーれ めへ ろよもほ     っぁゃぱば ぃ ぴび ぅゅぷぶ ぇ ぺべ ぉょぽぼ"
         }
@@ -102,7 +102,7 @@ export default {
     values2() {
       if (this.isVertical) {
         if (this.isMobile) {
-          return "      だざが  ぢじぎ  づずぐ  でぜげ  どぞごっぁゃぱば ぃ ぴび ぅゅぷぶ ぇ ぺべ、ぉょぽぼ@"
+          return "      だざが  ぢじぎ  づずぐ  でぜげ  どぞごっ     ぁゃぱば ぃ ぴび ぅゅぷぶ ぇ ぺべ、ぉょぽぼ@"
         } else {
           return "なたさかあにちしきいぬつすくうねてせけえのとそこお      だざが  ぢじぎ  づずぐ  でぜげ、 どぞご@"
         }
