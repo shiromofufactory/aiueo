@@ -4,7 +4,8 @@ nuxt
 <style lang="sass">
 $grid-breakpoints: (xs: 0, sm: 576px)
 $grid-columns: 6
-$font: "ヒラギノ丸ゴ Pro W4","ヒラギノ丸ゴ Pro","Hiragino Maru Gothic Pro","ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","HG丸ｺﾞｼｯｸM-PRO","HGMaruGothicMPRO"
+$font-rounded: "ヒラギノ丸ゴ Pro W4","ヒラギノ丸ゴ Pro","Hiragino Maru Gothic Pro","ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","HG丸ｺﾞｼｯｸM-PRO","HGMaruGothicMPRO"
+$font-mincho: "Yu Mincho","YuMincho","Hiragino Mincho ProN","Hiragino Mincho Pro","BIZ UDPMincho","MS PMincho",serif
 @use 'sass:math'
 @function breakpoint-min($name, $breakpoints: $grid-breakpoints)
   $min: map-get($breakpoints, $name)
@@ -30,9 +31,12 @@ html
   -webkit-text-size-adjust: 100%
   -webkit-tap-highlight-color: rgba(0,0,0, 0)
 
+:root
+  --app-font: #{$font-rounded}
+
 body
   margin: 0
-  font-family: $font
+  font-family: var(--app-font)
   font-size: 1rem
   line-height: 1.15
   color: #212529
@@ -215,7 +219,7 @@ button
   border: outset
   display: block
   height: 46px
-  font-family: $font
+  font-family: var(--app-font)
   font-size: 1.8rem
   line-height: 46px
   font-weight: bold
@@ -243,7 +247,10 @@ footer
     > button
       border-radius: 0.4rem
       border: outset
-      display: block
+      display: flex
+      align-items: center
+      justify-content: center
+      gap: 0.35rem
       font-size: 0.8rem
       height: 2rem
       width: 6rem

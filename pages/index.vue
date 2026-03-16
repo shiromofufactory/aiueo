@@ -15,6 +15,18 @@
         p 音声はブラウザ標準の読み上げ機能（Speech Synthesis API）を使っています。喋らせる言葉によっては発音が少しおかしいので、ママやパパが近くで見守りながら正しい発音を教えてあげてください。
         p また、PWA(Progressive Web Apps)に対応していますので、スマホやタブレットから「ホーム画面に追加」をすることでアプリのように動作させることができます。
         button.close(@click="about=false") &times
+  transition
+    .about(v-show="settingsOpen" @click="settingsOpen=false")
+      .message.settings-panel(@click.stop)
+        h2 設定
+        .setting-block
+          MySwitch(:value="slow" :show-status="true" @input="toggleSlow")
+        .setting-block
+          label.setting-label(for="font-mode") フォント
+          select#font-mode.setting-select(:value="fontMode" @change="changeFontMode($event.target.value)")
+            option(value="rounded") 丸ゴシック
+            option(value="mincho") 明朝体
+        button.close(@click="settingsOpen=false") &times
   .row.header.mb-1
     .col-6
       .header-inner.flex
@@ -41,7 +53,9 @@
     .footer-menu
       button.action(@click="toggleVertical")
         | {{ isVertical ? '横書き' : '縦書き' }}
-      MySwitch(:value="slow" @input="toggleSlow")
+      button.action.settings-button(aria-label="設定" @click="settingsOpen=true")
+        img.settings-icon(src="settings.svg" alt="")
+        span 設定
       .spacer
       a(href="https://docs.google.com/forms/d/e/1FAIpQLScIBdi7vLDZ2gttYNBonjfpXWjgQbSsN78E6_8sK2YqyKMY_A/viewform?usp=sf_link"  target="_blank" rel="noopener")
         | [お問い合わせ]
@@ -50,6 +64,15 @@
 </template>
 
 <script>
+const FONT_MODE_ROUNDED = "rounded"
+const FONT_MODE_MINCHO = "mincho"
+const FONT_FAMILY_MAP = {
+  [FONT_MODE_ROUNDED]:
+    '"ヒラギノ丸ゴ Pro W4","ヒラギノ丸ゴ Pro","Hiragino Maru Gothic Pro","ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","HG丸ｺﾞｼｯｸM-PRO","HGMaruGothicMPRO"',
+  [FONT_MODE_MINCHO]:
+    '"Yu Mincho","YuMincho","Hiragino Mincho ProN","Hiragino Mincho Pro","BIZ UDPMincho","MS PMincho",serif'
+}
+
 export default {
   components: {
     OneLetter: () => import("@/components/OneLetter.vue"),
@@ -65,7 +88,9 @@ export default {
     isVertical: false,
     isMobile: false,
     slow: false,
-    about: false
+    fontMode: FONT_MODE_ROUNDED,
+    about: false,
+    settingsOpen: false
   }),
   created() {
     this.utter = new SpeechSynthesisUtterance()
@@ -80,6 +105,11 @@ export default {
     this.isVertical = !!config?.isVertical
     this.katakana = !!config?.katakana
     this.slow = !!config?.slow
+    this.fontMode =
+      config?.fontMode === FONT_MODE_MINCHO
+        ? FONT_MODE_MINCHO
+        : FONT_MODE_ROUNDED
+    this.applyFontMode()
     this.setUtterRate()
     this.setIsMobile()
     window.addEventListener("resize", this.setIsMobile)
@@ -123,18 +153,31 @@ export default {
         JSON.stringify({
           isVertical: this.isVertical,
           katakana: this.katakana,
-          slow: this.slow
+          slow: this.slow,
+          fontMode: this.fontMode
         })
+      )
+    },
+    applyFontMode() {
+      document.documentElement.style.setProperty(
+        "--app-font",
+        FONT_FAMILY_MAP[this.fontMode] || FONT_FAMILY_MAP[FONT_MODE_ROUNDED]
       )
     },
     setIsMobile() {
       this.isMobile = window.innerWidth < 576
     },
+    changeFontMode(fontMode) {
+      this.fontMode =
+        fontMode === FONT_MODE_MINCHO ? FONT_MODE_MINCHO : FONT_MODE_ROUNDED
+      this.applyFontMode()
+      this.saveConfig()
+    },
     toggleVertical() {
       this.isVertical = !this.isVertical
       this.saveConfig()
     },
-    toggleSlow(e) {
+    toggleSlow() {
       this.slow = !this.slow
       this.setUtterRate()
       this.saveConfig()
@@ -182,3 +225,41 @@ export default {
   }
 }
 </script>
+
+<style lang="sass">
+.settings-panel
+  max-width: 28rem
+
+.setting-block
+  display: flex
+  flex-direction: column
+  align-items: stretch
+  gap: 0.5rem
+  margin-bottom: 1.25rem
+  &:last-of-type
+    margin-bottom: 0
+
+.setting-label
+  color: #343a40
+  text-align: left
+
+.setting-select
+  min-height: 2.5rem
+  padding: 0.5rem 0.75rem
+  border: 1px solid #c8c9b7
+  border-radius: 0.4rem
+  background-color: #fff7e8
+  font: inherit
+  width: 100%
+
+.settings-button
+  width: 4.5rem !important
+
+.settings-icon
+  width: 1rem
+  height: 1rem
+
+@media (max-width: 575px)
+  .setting-block
+    margin-bottom: 1rem
+</style>

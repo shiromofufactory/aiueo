@@ -1,9 +1,11 @@
 <template lang="pug">
-div
-  label.switch
-    input(:checked="value" type="checkbox" @input="$emit('input',$event)")
-    span.slider
-  span.note ゆっくり発語
+div.switch-field
+  span.note(v-if="showLabel") {{ label }}
+  .switch-control
+    label.switch
+      input(:checked="value" type="checkbox" @input="$emit('input',$event)")
+      span.slider
+    span.status(v-if="showStatus") {{ value ? onText : offText }}
 </template>
 
 <script>
@@ -12,14 +14,51 @@ export default {
     value: {
       type: Boolean,
       required: false
+    },
+    label: {
+      type: String,
+      required: false,
+      default: "ゆっくり発語"
+    },
+    showLabel: {
+      type: Boolean,
+      required: false,
+      default: true
+    },
+    showStatus: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    onText: {
+      type: String,
+      required: false,
+      default: "ON"
+    },
+    offText: {
+      type: String,
+      required: false,
+      default: "OFF"
     }
   }
 }
 </script>
 
 <style scoped>
+.switch-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.switch-control {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
 .switch {
-  margin: 0 8px;
   position: relative;
   display: inline-block;
   width: 52px;
@@ -67,5 +106,15 @@ input:checked + .slider:before {
 .note {
   height: 28px;
   line-height: 28px;
+}
+
+.status {
+  min-width: 2.5rem;
+  height: 28px;
+  line-height: 28px;
+  color: #4a4a4a;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-align: left;
 }
 </style>
