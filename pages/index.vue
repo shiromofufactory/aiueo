@@ -26,6 +26,11 @@
           select#font-mode.setting-select(:value="fontMode" @change="changeFontMode($event.target.value)")
             option(value="rounded") 丸ゴシック
             option(value="mincho") 明朝体
+        .setting-block
+          label.setting-label(for="speech-voice") 音声
+          select#speech-voice.setting-select(:value="selectedVoiceKey" @change="changeVoice($event.target.value)")
+            option(value="") 自動選択
+            option(v-for="voice in japaneseVoices" :key="voiceKey(voice)" :value="voiceKey(voice)") {{voiceLabel(voice)}}
         button.close(@click="settingsOpen=false") &times
   .row.header.mb-1
     .col-6
@@ -88,13 +93,14 @@ export default {
     isVertical: false,
     isMobile: false,
     slow: false,
+    voices: [],
+    selectedVoiceKey: "",
     fontMode: FONT_MODE_ROUNDED,
     about: false,
     settingsOpen: false
   }),
   created() {
     this.utter = new SpeechSynthesisUtterance()
-    this.voices = window.speechSynthesis.getVoices()
     this.utter.lang = "ja-JP"
   },
   mounted() {
@@ -105,16 +111,20 @@ export default {
     this.isVertical = !!config?.isVertical
     this.katakana = !!config?.katakana
     this.slow = !!config?.slow
+    this.selectedVoiceKey = config?.voiceKey || ""
     this.fontMode =
       config?.fontMode === FONT_MODE_MINCHO
         ? FONT_MODE_MINCHO
         : FONT_MODE_ROUNDED
     this.applyFontMode()
     this.setUtterRate()
+    this.setVoices()
     this.setIsMobile()
+    this.listenVoiceEvents()
     window.addEventListener("resize", this.setIsMobile)
   },
   beforeDestroy() {
+    this.removeVoiceEvents()
     window.removeEventListener("resize", this.setIsMobile)
   },
   computed: {
@@ -144,6 +154,9 @@ export default {
       return {
         "clear-next": this.clearNext
       }
+    },
+    japaneseVoices() {
+      return this.voices.filter(this.isJapaneseVoice)
     }
   },
   methods: {
@@ -154,6 +167,7 @@ export default {
           isVertical: this.isVertical,
           katakana: this.katakana,
           slow: this.slow,
+          voiceKey: this.selectedVoiceKey,
           fontMode: this.fontMode
         })
       )
@@ -185,6 +199,60 @@ export default {
     setUtterRate() {
       this.utter.rate = this.slow ? 0.5 : 1.0
     },
+    listenVoiceEvents() {
+      const synth = window.speechSynthesis
+      if (!synth) return
+      if (synth.addEventListener) {
+        synth.addEventListener("voiceschanged", this.setVoices)
+      } else {
+        synth.onvoiceschanged = this.setVoices
+      }
+    },
+    removeVoiceEvents() {
+      const synth = window.speechSynthesis
+      if (!synth) return
+      if (synth.removeEventListener) {
+        synth.removeEventListener("voiceschanged", this.setVoices)
+      } else if (synth.onvoiceschanged === this.setVoices) {
+        synth.onvoiceschanged = null
+      }
+    },
+    setVoices() {
+      const synth = window.speechSynthesis
+      if (!synth) return
+      this.voices = synth.getVoices ? synth.getVoices() : []
+      this.applyVoice()
+    },
+    isJapaneseVoice(voice) {
+      return /^ja([-_]|$)/i.test(voice.lang || "")
+    },
+    voiceKey(voice) {
+      return [voice.voiceURI, voice.name, voice.lang].join("|")
+    },
+    voiceLabel(voice) {
+      const serviceType = voice.localService ? "端末内" : "オンライン"
+      return `${voice.name}（${serviceType}）`
+    },
+    changeVoice(voiceKey) {
+      this.selectedVoiceKey = voiceKey
+      this.applyVoice()
+      this.saveConfig()
+    },
+    applyVoice() {
+      const voice =
+        this.japaneseVoices.find(item => {
+          return (
+            this.selectedVoiceKey &&
+            this.voiceKey(item) === this.selectedVoiceKey
+          )
+        }) ||
+        this.japaneseVoices.find(item => item.default) ||
+        this.japaneseVoices.find(item => item.localService) ||
+        this.japaneseVoices[0]
+
+      this.utter.voice = voice || null
+      this.utter.lang = voice?.lang || "ja-JP"
+    },
     getKana(str) {
       if (!this.katakana) return str
       return str.replace(/[\u3041-\u3096]/g, match => {
@@ -196,10 +264,12 @@ export default {
       this.saveConfig()
     },
     speech(text) {
-      if (!text) return
+      const synth = window.speechSynthesis
+      if (!text || !synth) return
+      this.applyVoice()
       this.utter.text = text
-      window.speechSynthesis.cancel()
-      window.speechSynthesis.speak(this.utter)
+      synth.cancel()
+      synth.speak(this.utter)
     },
     speechOne(text) {
       if (text == "@") return this.toggleKatakana()
