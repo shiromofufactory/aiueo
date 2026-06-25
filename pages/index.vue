@@ -56,15 +56,17 @@
       one-letter(v-for="value,idx in values4.split('')" :key="idx" :value="getKana(value)" @send="speechOne")
   footer
     .footer-menu
-      button.action(@click="toggleVertical")
-        | {{ isVertical ? '横書き' : '縦書き' }}
-      button.action.settings-button(aria-label="設定" @click="settingsOpen=true")
-        img.settings-icon(src="settings.svg" alt="")
-        span 設定
-      .spacer
-      a(href="https://docs.google.com/forms/d/e/1FAIpQLScIBdi7vLDZ2gttYNBonjfpXWjgQbSsN78E6_8sK2YqyKMY_A/viewform?usp=sf_link"  target="_blank" rel="noopener")
-        | [お問い合わせ]
-      a(href="#" @click.prevent="about=!about") [about]
+      .footer-actions
+        button.action(@click="toggleVertical")
+          | {{ isVertical ? '横書き' : '縦書き' }}
+        button.action.settings-button(aria-label="設定" @click="settingsOpen=true")
+          img.settings-icon(src="settings.svg" alt="")
+          span 設定
+      .footer-links
+        a(href="https://docs.google.com/forms/d/e/1FAIpQLScIBdi7vLDZ2gttYNBonjfpXWjgQbSsN78E6_8sK2YqyKMY_A/viewform?usp=sf_link"  target="_blank" rel="noopener")
+          | [お問い合わせ]
+        nuxt-link(to="/support") [支援のお願い]
+        a(href="#" @click.prevent="about=!about") [about]
     .note Copyright ©2024 しろもふファクトリー
 </template>
 

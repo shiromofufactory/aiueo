@@ -243,7 +243,14 @@ footer
   margin-top: 1rem
   .footer-menu
     display: flex
+    align-items: flex-start
+    flex-wrap: wrap
+    gap: 0.5rem
     margin-bottom: 0.5rem
+  .footer-actions
+    display: flex
+    gap: 0.5rem
+    flex-shrink: 0
     > button
       border-radius: 0.4rem
       border: outset
@@ -259,12 +266,29 @@ footer
       &:active,&:hover
         border: inset
         background-color: #e0ea9b
+  .footer-links
+    display: flex
+    flex-wrap: wrap
+    justify-content: flex-end
+    gap: 0 1rem
+    margin-left: auto
     > a
       flex-shrink: 0
       display: inline-block
-      margin: 0.75rem 0 0 1rem
+      margin-top: 0.75rem
       text-decoration: none
-      font-size: 0.8rem
+      font-size: 0.9rem
       color: #3fb4f8
       text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff, 0px 1px 0 #fff,  0-1px 0 #fff, -1px 0 0 #fff, 1px 0 0 #fff
+
+@media (max-width: 575px)
+  footer
+    .footer-actions,
+    .footer-links
+      width: 100%
+    .footer-links
+      justify-content: center
+      gap: 0 0.75rem
+      margin-left: 0
+      margin-top: 0.2rem
 </style>
