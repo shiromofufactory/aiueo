@@ -47,6 +47,9 @@ module.exports = {
     path: "/sitemap.xml",
     hostname: URL
   },
+  env: {
+    googleTtsEndpoint: process.env.GOOGLE_TTS_ENDPOINT || ""
+  },
   build: {
     extend(config, { isDev, isClient }) {
       if (isDev && isClient) {

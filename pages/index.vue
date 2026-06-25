@@ -30,6 +30,7 @@
           label.setting-label(for="speech-voice") 音声
           select#speech-voice.setting-select(:value="selectedVoiceKey" @change="changeVoice($event.target.value)")
             option(value="") 自動選択
+            option(v-for="voice in cloudTtsVoices" :key="voice.key" :value="voice.key") {{voice.label}}
             option(v-for="voice in japaneseVoices" :key="voiceKey(voice)" :value="voiceKey(voice)") {{voiceLabel(voice)}}
         button.close(@click="settingsOpen=false") &times
   .row.header.mb-1
@@ -73,6 +74,24 @@
 <script>
 const FONT_MODE_ROUNDED = "rounded"
 const FONT_MODE_MINCHO = "mincho"
+const CLOUD_TTS_PREFIX = "google-cloud-tts:"
+const CLOUD_TTS_VOICES = [
+  {
+    key: `${CLOUD_TTS_PREFIX}neural2Female`,
+    value: "neural2Female",
+    label: "Google Cloud Neural2-B（女性）"
+  },
+  {
+    key: `${CLOUD_TTS_PREFIX}neural2MaleC`,
+    value: "neural2MaleC",
+    label: "Google Cloud Neural2-C（男性）"
+  },
+  {
+    key: `${CLOUD_TTS_PREFIX}neural2MaleD`,
+    value: "neural2MaleD",
+    label: "Google Cloud Neural2-D（男性）"
+  }
+]
 const FONT_FAMILY_MAP = {
   [FONT_MODE_ROUNDED]:
     '"ヒラギノ丸ゴ Pro W4","ヒラギノ丸ゴ Pro","Hiragino Maru Gothic Pro","ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","HG丸ｺﾞｼｯｸM-PRO","HGMaruGothicMPRO"',
@@ -97,6 +116,9 @@ export default {
     slow: false,
     voices: [],
     selectedVoiceKey: "",
+    cloudAudioContext: null,
+    cloudAudioSource: null,
+    cloudAudioCache: {},
     fontMode: FONT_MODE_ROUNDED,
     about: false,
     settingsOpen: false
@@ -126,6 +148,7 @@ export default {
     window.addEventListener("resize", this.setIsMobile)
   },
   beforeDestroy() {
+    this.stopCloudAudio()
     this.removeVoiceEvents()
     window.removeEventListener("resize", this.setIsMobile)
   },
@@ -159,6 +182,9 @@ export default {
     },
     japaneseVoices() {
       return this.voices.filter(this.isJapaneseVoice)
+    },
+    cloudTtsVoices() {
+      return CLOUD_TTS_VOICES
     }
   },
   methods: {
@@ -241,6 +267,12 @@ export default {
       this.saveConfig()
     },
     applyVoice() {
+      if (this.isCloudTtsVoice()) {
+        this.utter.voice = null
+        this.utter.lang = "ja-JP"
+        return
+      }
+
       const voice =
         this.japaneseVoices.find(item => {
           return (
@@ -266,12 +298,123 @@ export default {
       this.saveConfig()
     },
     speech(text) {
+      if (!text) return
+      if (this.isCloudTtsVoice()) {
+        this.speechWithCloudTts(text)
+      } else {
+        this.speechWithBrowser(text)
+      }
+    },
+    speechWithBrowser(text) {
       const synth = window.speechSynthesis
-      if (!text || !synth) return
+      if (!synth) return
+      this.stopCloudAudio()
       this.applyVoice()
       this.utter.text = text
       synth.cancel()
       synth.speak(this.utter)
+    },
+    async speechWithCloudTts(text) {
+      const endpoint = process.env.googleTtsEndpoint
+      if (!endpoint) {
+        console.warn("GOOGLE_TTS_ENDPOINT is not configured.")
+        this.speechWithBrowser(text)
+        return
+      }
+
+      const voice = this.getSelectedCloudTtsVoice()
+      if (!voice) {
+        this.speechWithBrowser(text)
+        return
+      }
+
+      window.speechSynthesis?.cancel()
+      await this.prepareCloudAudio()
+
+      const cacheKey = [voice.value, this.slow ? "slow" : "normal", text].join(
+        "|"
+      )
+      let audio = this.cloudAudioCache[cacheKey]
+      if (!audio) {
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              text,
+              voice: voice.value,
+              rate: this.slow ? 0.5 : 1.0
+            })
+          })
+
+          if (!response.ok) {
+            console.warn("Google Cloud TTS request failed.", response.status)
+            return
+          }
+
+          audio = await response.json()
+        } catch (error) {
+          console.warn("Google Cloud TTS request failed.", error)
+          return
+        }
+        this.$set(this.cloudAudioCache, cacheKey, audio)
+      }
+
+      await this.playCloudAudio(audio.audioContent, audio.mimeType)
+    },
+    async prepareCloudAudio() {
+      const AudioContext = window.AudioContext || window.webkitAudioContext
+      if (!AudioContext) return
+      if (!this.cloudAudioContext) {
+        this.cloudAudioContext = new AudioContext()
+      }
+      if (this.cloudAudioContext.state === "suspended") {
+        await this.cloudAudioContext.resume()
+      }
+    },
+    async playCloudAudio(audioContent, mimeType = "audio/mpeg") {
+      if (!audioContent) return
+      this.stopCloudAudio()
+
+      if (this.cloudAudioContext) {
+        const audioBuffer = await this.cloudAudioContext.decodeAudioData(
+          this.base64ToArrayBuffer(audioContent)
+        )
+        const source = this.cloudAudioContext.createBufferSource()
+        source.buffer = audioBuffer
+        source.connect(this.cloudAudioContext.destination)
+        source.start(0)
+        this.cloudAudioSource = source
+        return
+      }
+
+      const audio = new Audio(`data:${mimeType};base64,${audioContent}`)
+      this.cloudAudioSource = audio
+      await audio.play()
+    },
+    stopCloudAudio() {
+      if (!this.cloudAudioSource) return
+      try {
+        this.cloudAudioSource.stop?.()
+        this.cloudAudioSource.pause?.()
+      } catch {}
+      this.cloudAudioSource = null
+    },
+    base64ToArrayBuffer(base64) {
+      const binary = window.atob(base64)
+      const bytes = new Uint8Array(binary.length)
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i)
+      }
+      return bytes.buffer
+    },
+    isCloudTtsVoice(voiceKey = this.selectedVoiceKey) {
+      return String(voiceKey).startsWith(CLOUD_TTS_PREFIX)
+    },
+    getSelectedCloudTtsVoice() {
+      return CLOUD_TTS_VOICES.find(voice => voice.key === this.selectedVoiceKey)
     },
     speechOne(text) {
       if (text == "@") return this.toggleKatakana()
